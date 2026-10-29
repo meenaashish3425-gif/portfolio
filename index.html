@@ -1,0 +1,600 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ashish Meena | Civil Engineer Portfolio</title>
+  
+  <!-- Fonts and Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Three.js Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <style>
+    /* CSS Variables for Night Mode (Default) */
+    :root {
+      --bg: #09090b; 
+      --surface: #18181b; 
+      --text-main: #ffffff;
+      --text-muted: #a1a1aa;
+      --accent: #fbbf24; /* Glowing Gold */
+      --accent-glow: rgba(251, 191, 36, 0.2);
+      --border: rgba(255, 255, 255, 0.08);
+      --grid-bg: rgba(255, 255, 255, 0.03);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* CSS Variables for Day Mode */
+    body.day-mode {
+      --bg: #f3f4f6; 
+      --surface: #ffffff; 
+      --text-main: #111827;
+      --text-muted: #4b5563;
+      --accent: #d97706; /* Dark Amber */
+      --accent-glow: rgba(217, 119, 6, 0.15);
+      --border: rgba(0, 0, 0, 0.1);
+      --grid-bg: rgba(0, 0, 0, 0.03);
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.4s ease, color 0.4s ease;
+      /* Architectural blueprint grid */
+      background-image: radial-gradient(var(--grid-bg) 1px, transparent 1px);
+      background-size: 24px 24px;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 0;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle-wrapper {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+
+    #theme-toggle {
+      background: var(--surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #theme-toggle:hover {
+      transform: scale(1.05);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Bento Grid Layout */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 20px;
+      grid-auto-flow: dense;
+    }
+
+    .bento-card {
+      background: var(--surface);
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      padding: 30px;
+      box-shadow: var(--shadow);
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bento-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    /* Specific Card Sizings */
+    .card-hero {
+      grid-column: span 12;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .card-3d {
+      grid-column: span 12;
+      height: 500px;
+      padding: 0;
+    }
+
+    .card-edu-main {
+      grid-column: span 6;
+    }
+
+    .card-edu-sub {
+      grid-column: span 3;
+    }
+
+    .card-contact {
+      grid-column: span 12;
+    }
+
+    @media (max-width: 900px) {
+      .card-edu-main { grid-column: span 12; }
+      .card-edu-sub { grid-column: span 6; }
+    }
+    
+    @media (max-width: 600px) {
+      .card-edu-sub { grid-column: span 12; }
+      .card-hero { flex-direction: column-reverse; text-align: left; align-items: flex-start; }
+      .hero-img { width: 150px; height: 150px; }
+      .hero-text h1 { font-size: 3rem; }
+    }
+
+    /* Hero Content */
+    .hero-text h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1;
+      margin-bottom: 15px;
+    }
+    
+    .hero-text h1 span {
+      color: var(--accent);
+    }
+
+    .hero-text p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 500px;
+      line-height: 1.5;
+    }
+
+    .hero-img-container {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .hero-img {
+      width: 200px;
+      height: 200px;
+      border-radius: 24px;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-img-bg {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      border-radius: 24px;
+      z-index: 1;
+      opacity: 0.5;
+    }
+
+    /* 3D Canvas Styles */
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      border-radius: 24px;
+    }
+    
+    #canvas-container:active {
+      cursor: grabbing;
+    }
+
+    .canvas-overlay {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      background: var(--surface);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .canvas-overlay i {
+      color: var(--accent);
+    }
+
+    /* Typography inside Cards */
+    .bento-card small {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .bento-card h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+    
+    .card-edu-main h2 {
+      font-size: 2.2rem;
+      color: var(--accent);
+    }
+
+    .bento-card p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+
+    /* Contact Links */
+    .contact-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--bg);
+      color: var(--text-main);
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+
+    .social-btn i {
+      font-size: 1.2rem;
+    }
+
+    .social-btn:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    
+    .direct-contact {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .direct-contact a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color 0.2s;
+    }
+    
+    .direct-contact a:hover {
+      color: var(--accent);
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Theme Toggle -->
+    <div class="theme-toggle-wrapper">
+      <button id="theme-toggle" aria-label="Toggle Day/Night Mode">
+        <i class="fas fa-sun"></i>
+      </button>
+    </div>
+
+    <div class="bento-grid">
+      
+      <!-- Hero Section -->
+      <div class="bento-card card-hero">
+        <div class="hero-text">
+          <h1>Ashish <span>Meena</span></h1>
+          <p><b>Civil Engineer</b> specializing in structural analysis, drafting, and sustainable building frameworks. Building the foundations of tomorrow.</p>
+        </div>
+        <div class="hero-img-container">
+          <div class="hero-img-bg"></div>
+          <!-- Exact user provided image strictly applied -->
+          <img class="hero-img" src="1000345695.png" alt="Ashish Meena">
+        </div>
+      </div>
+
+      <!-- 3D Skyscraper Section -->
+      <div class="bento-card card-3d">
+        <div id="canvas-container"></div>
+        <div class="canvas-overlay">
+          <i class="fas fa-cube"></i> Interactive Structural Model (Drag to Rotate)
+        </div>
+      </div>
+
+      <!-- Education Cards -->
+      <div class="bento-card card-edu-main">
+        <small>Current Degree</small>
+        <h2>B.Tech Civil Eng.</h2>
+        <p><b>Lovely Professional University (LPU), Punjab.</b><br>Gaining hands-on experience in modern construction methodologies and structural design.</p>
+      </div>
+
+      <div class="bento-card card-edu-sub">
+        <small>Senior Secondary (12th)</small>
+        <h2>64.0%</h2>
+        <p>Disha Delphi Public School</p>
+      </div>
+
+      <div class="bento-card card-edu-sub">
+        <small>Matriculation (10th)</small>
+        <h2>75.4%</h2>
+        <p>Decent School, Kota</p>
+      </div>
+
+      <!-- Contact Section -->
+      <div class="bento-card card-contact">
+        <small>Connect</small>
+        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Let's work together.</h2>
+        
+        <div class="contact-grid">
+          <a href="https://www.linkedin.com/in/ashish-meena-1a6998446/" target="_blank" class="social-btn">
+            <i class="fab fa-linkedin"></i> LinkedIn
+          </a>
+          <a href="https://github.com/meenaashish3425-gif" target="_blank" class="social-btn">
+            <i class="fab fa-github"></i> GitHub
+          </a>
+          <a href="https://www.instagram.com/ashish_meena369?rpxt=MTRmOTN3d2ZlZWpl" target="_blank" class="social-btn">
+            <i class="fab fa-instagram"></i> Instagram
+          </a>
+          <a href="https://wa.me/917340013156" target="_blank" class="social-btn">
+            <i class="fab fa-whatsapp"></i> WhatsApp
+          </a>
+        </div>
+        
+        <div class="direct-contact">
+          <a href="mailto:meenaashish3425@gmail.com"><i class="fas fa-envelope"></i> meenaashish3425@gmail.com</a>
+          <a href="tel:+917340013156"><i class="fas fa-phone-alt"></i> +91 73400 13156</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Three.js Setup and Theme Toggle Script -->
+  <script>
+    window.onload = function() {
+      
+      // ----------------------------------------------------
+      // 1. Theme Toggle Logic
+      // ----------------------------------------------------
+      const themeToggleBtn = document.getElementById('theme-toggle');
+      const themeIcon = themeToggleBtn.querySelector('i');
+      let isDayMode = false;
+      
+      // Material colors for 3D model
+      const nightColor = 0xfbbf24; // Glowing Gold
+      const nightStrongColor = 0xf59e0b;
+      
+      const dayColor = 0xd97706;   // Dark Amber
+      const dayStrongColor = 0xb45309;
+
+      // ----------------------------------------------------
+      // 2. Three.js Complex Skyscraper Initialization
+      // ----------------------------------------------------
+      const container = document.getElementById('canvas-container');
+      const scene = new THREE.Scene();
+      
+      // Camera Setup
+      const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
+      camera.position.set(0, 15, 55); 
+      camera.lookAt(0, 0, 0);
+
+      // Renderer Setup
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      container.appendChild(renderer.domElement);
+
+      // Building Group
+      const building = new THREE.Group();
+      
+      // Shared Materials (We will mutate these on theme change)
+      const baseMaterial = new THREE.LineBasicMaterial({ 
+        color: nightColor,
+        transparent: true, 
+        opacity: 0.4 
+      });
+      const strongMaterial = new THREE.LineBasicMaterial({ 
+        color: nightStrongColor,
+        transparent: true, 
+        opacity: 0.85 
+      });
+
+      // Part A: Cylindrical Core (Elevator shaft)
+      const coreHeight = 28;
+      const coreGeo = new THREE.CylinderGeometry(2, 2, coreHeight, 16, 16);
+      const coreWireframe = new THREE.LineSegments(new THREE.WireframeGeometry(coreGeo), strongMaterial);
+      building.add(coreWireframe);
+
+      // Part B: Floor Rings and Pillars with Cross-Bracing
+      const numFloors = 14;
+      const floorSpacing = 2;
+      const outerRadius = 8;
+      const numPillars = 10;
+      const startY = -(coreHeight / 2);
+
+      for (let i = 0; i <= numFloors; i++) {
+          const y = startY + (i * floorSpacing);
+          
+          // Horizontal Floor Ring
+          const ringGeo = new THREE.RingGeometry(2, outerRadius, numPillars);
+          ringGeo.rotateX(Math.PI / 2);
+          ringGeo.translate(0, y, 0);
+          const ringWire = new THREE.LineSegments(new THREE.WireframeGeometry(ringGeo), baseMaterial);
+          building.add(ringWire);
+
+          // Vertical Pillars & Diagonal Cross Bracing
+          if (i < numFloors) {
+              for (let j = 0; j < numPillars; j++) {
+                  const angle1 = (j / numPillars) * Math.PI * 2;
+                  const angle2 = ((j + 1) / numPillars) * Math.PI * 2;
+                  
+                  const p1 = new THREE.Vector3(Math.cos(angle1) * outerRadius, y, Math.sin(angle1) * outerRadius);
+                  const p2 = new THREE.Vector3(Math.cos(angle2) * outerRadius, y, Math.sin(angle2) * outerRadius);
+                  const p3 = new THREE.Vector3(Math.cos(angle1) * outerRadius, y + floorSpacing, Math.sin(angle1) * outerRadius);
+                  const p4 = new THREE.Vector3(Math.cos(angle2) * outerRadius, y + floorSpacing, Math.sin(angle2) * outerRadius);
+
+                  // Main Vertical Pillar
+                  const pillarGeo = new THREE.BufferGeometry().setFromPoints([p1, p3]);
+                  building.add(new THREE.Line(pillarGeo, strongMaterial));
+                  
+                  // X-Bracing (Cross Bracing)
+                  const brace1 = new THREE.BufferGeometry().setFromPoints([p1, p4]);
+                  building.add(new THREE.Line(brace1, baseMaterial));
+                  const brace2 = new THREE.BufferGeometry().setFromPoints([p2, p3]);
+                  building.add(new THREE.Line(brace2, baseMaterial));
+                  
+                  // Radial Beams connecting Core to Outer Pillars
+                  const corePoint = new THREE.Vector3(Math.cos(angle1) * 2, y, Math.sin(angle1) * 2);
+                  const floorBeam = new THREE.BufferGeometry().setFromPoints([corePoint, p1]);
+                  building.add(new THREE.Line(floorBeam, baseMaterial));
+              }
+          }
+      }
+      scene.add(building);
+
+      // ----------------------------------------------------
+      // 3. Interaction and Animation
+      // ----------------------------------------------------
+      let isDragging = false;
+      let previousPosition = { x: 0, y: 0 };
+      let targetRotation = { x: 0.1, y: 0 }; 
+
+      const onInteractionStart = (clientX, clientY) => {
+          isDragging = true;
+          previousPosition = { x: clientX, y: clientY };
+      };
+
+      const onInteractionMove = (clientX, clientY) => {
+          if (isDragging) {
+              const deltaMove = {
+                  x: clientX - previousPosition.x,
+                  y: clientY - previousPosition.y
+              };
+              targetRotation.y += deltaMove.x * 0.008;
+              targetRotation.x += deltaMove.y * 0.008;
+              // Limit up/down rotation for a better view
+              targetRotation.x = Math.max(-0.4, Math.min(0.6, targetRotation.x));
+              previousPosition = { x: clientX, y: clientY };
+          }
+      };
+
+      // Mouse Events
+      container.addEventListener('mousedown', (e) => onInteractionStart(e.clientX, e.clientY));
+      container.addEventListener('mousemove', (e) => onInteractionMove(e.clientX, e.clientY));
+      window.addEventListener('mouseup', () => { isDragging = false; });
+      
+      // Touch Events (Mobile)
+      container.addEventListener('touchstart', (e) => onInteractionStart(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
+      container.addEventListener('touchmove', (e) => onInteractionMove(e.touches[0].clientX, e.touches[0].clientY), {passive: true});
+      window.addEventListener('touchend', () => { isDragging = false; });
+
+      // Render Loop
+      function animate() {
+          requestAnimationFrame(animate);
+          
+          // Auto-rotate slowly when not being dragged
+          if(!isDragging) {
+              targetRotation.y += 0.003; 
+          }
+          
+          // Smoothly interpolate current rotation towards target rotation
+          building.rotation.y += (targetRotation.y - building.rotation.y) * 0.1;
+          building.rotation.x += (targetRotation.x - building.rotation.x) * 0.1;
+          
+          renderer.render(scene, camera);
+      }
+      animate();
+
+      // Handle Window Resize
+      window.addEventListener('resize', () => {
+          camera.aspect = container.clientWidth / container.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+
+      // ----------------------------------------------------
+      // 4. Handle Theme Change Event
+      // ----------------------------------------------------
+      themeToggleBtn.addEventListener('click', () => {
+          isDayMode = !isDayMode;
+          if (isDayMode) {
+              // Day Mode
+              document.body.classList.add('day-mode');
+              themeIcon.classList.remove('fa-sun');
+              themeIcon.classList.add('fa-moon');
+              // Update 3D wireframe colors for Day (Dark Amber)
+              baseMaterial.color.setHex(dayColor); 
+              strongMaterial.color.setHex(dayStrongColor);
+          } else {
+              // Night Mode
+              document.body.classList.remove('day-mode');
+              themeIcon.classList.remove('fa-moon');
+              themeIcon.classList.add('fa-sun');
+              // Update 3D wireframe colors for Night (Glowing Gold)
+              baseMaterial.color.setHex(nightColor); 
+              strongMaterial.color.setHex(nightStrongColor);
+          }
+      });
+
+    };
+  </script>
+</body>
+</html>
+```
